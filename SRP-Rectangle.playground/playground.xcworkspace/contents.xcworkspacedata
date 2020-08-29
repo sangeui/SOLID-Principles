@@ -2,6 +2,6 @@
 <Workspace
    version = "1.0">
    <FileRef
-      location = "self:">
+      location = "self:/Users/sangeui/Desktop/Swift Projects/Principles/SRP-Rectangle.playground">
    </FileRef>
 </Workspace>
