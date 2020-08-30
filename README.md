@@ -50,6 +50,76 @@ OCP 를 따르는 모듈의 속성
 
 ---
 
+```
+추상화:
+	추상 기반 클래스이자, 모든 가능한 파생 클래스를 대표하는
+	가능한 행위의 제한되지 않은 묶음이기도 하다.
+```
+
+아래는 OCP 를 지키지 않은 구조의 예를 보여준다. 
+
+![the image for OCP](https://github.com/sangeui/SOLID-Principles/blob/master/Resources/Images/OCP1.png)
+
+언뜻 보면, 그렇게 잘못된 것이 없는 것처럼 보인다. `Human` 은 `Specific Tool` 이 필요하기 때문에 이를 사용한다.
+
+위 구조를 코드로 옮기면 아래와 같다.
+
+```swift
+class Human {}
+class SpecificTool {}
+```
+
+`Human` 은 `Specific Tool` 을 필요로 한다. 
+
+```swift
+class Human {
+	var specificTool = SpecificTool()
+}
+```
+
+`Specific Tool` 은 몇가지 행위를 제공하고 `Human` 은 이를 모두 사용한다. 
+
+```swift
+class SpecificTool {
+	func grasp() {}
+	func lift() {}
+	func use() -> Bool {}
+	func putDown() {}
+}
+
+class Human {
+	var specificTool = SpecificTool()
+	
+	func ready() {
+		specificTool.grasp()
+		specificTool.lift()
+	}
+	func start() {
+		if specificTool.use() {}
+		else {}
+	}
+	func done() {
+		specificTool.putDown()
+	}
+}
+```
+
+쉽게 코드 작성이 마무리될 수 있다. 그런 것 처럼 보인다. 
+
+하지만 요구사항이라는 것은, 매번 바뀐다. 이번에는 `Human` 이 쓰던 도구가 싫증이 났다고 가정하자.
+
+그래서 새로운 도구를 하나 새로 구매했다. 
+
+```swift
+class NewTool {}
+```
+
+새로운 도구를 보니 기쁨을 감추지 못한다. 하지만 이 도구는 최신식이어서, 기존의 도구와는 전혀 다른 인터페이스를 제공한다. 
+
+```swift
+class 
+```
+
 ***
 #### 리스코프 치환 원칙 (LSP)
 ***
