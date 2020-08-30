@@ -50,6 +50,174 @@ OCP 를 따르는 모듈의 속성
 
 ---
 
+```
+추상화:
+	추상 기반 클래스이자, 모든 가능한 파생 클래스를 대표하는
+	가능한 행위의 제한되지 않은 묶음이기도 하다.
+```
+
+아래는 OCP 를 지키지 않은 구조의 예를 보여준다. 
+
+![the image for OCP](https://github.com/sangeui/SOLID-Principles/blob/master/Resources/Images/OCP1.png)
+
+언뜻 보면, 그렇게 잘못된 것이 없는 것처럼 보인다. `Human` 은 `Specific Tool` 이 필요하기 때문에 이를 사용한다.
+
+위 구조를 코드로 옮기면 아래와 같다.
+
+```swift
+class Human {}
+class SpecificTool {}
+```
+
+`Human` 은 `Specific Tool` 을 필요로 한다. 
+
+```swift
+class Human {
+	var specificTool = SpecificTool()
+}
+```
+
+`Specific Tool` 은 몇가지 행위를 제공하고 `Human` 은 이를 모두 사용한다. 
+
+```swift
+class SpecificTool {
+	func grasp() {}
+	func lift() {}
+	func use() -> Bool {}
+	func putDown() {}
+}
+
+class Human {
+	var specificTool = SpecificTool()
+	
+	func ready() {
+		specificTool.grasp()
+		specificTool.lift()
+	}
+	func start() {
+		if specificTool.use() {}
+		else {}
+	}
+	func done() {
+		specificTool.putDown()
+	}
+}
+```
+
+쉽게 코드 작성이 마무리될 수 있다. 그런 것 처럼 보인다. 
+
+하지만 요구사항이라는 것은, 매번 바뀐다. 이번에는 `Human` 이 쓰던 도구가 싫증이 났다고 가정하자.
+
+그래서 새로운 도구를 하나 새로 구매했다. 
+
+```swift
+class NewTool {}
+```
+
+새로운 도구를 보니 기쁨을 감추지 못한다. 하지만 이 도구는 최신식이어서, 기존의 도구와는 전혀 다른 인터페이스를 제공한다. 
+
+```swift
+class NewTool {
+	battery: Battery
+	init(battery: Battery) {
+		self.battery = battery
+	}
+
+	func turnOn() -> Bool {}
+	func turnOff() -> Bool {}
+	func use() -> Bool {}
+}
+```
+
+어쨌든 새로운 도구를 `Human` 클래스가 사용할 수 있도록 해본다. 
+
+```swift
+class Human {
+	// SpecificTool 은 더 이상 사용하지 않는다.
+	// var specificTool = SpecificTool()
+	var tool = NewTool(battery: Battery())
+	
+	// SpecificTool 인터페이스를 모두 지운다.
+	func ready() {
+		// specificTool.grasp()
+		// specificTool.lift()
+		if tool.turnOn() {}
+		else {}
+	}
+	func start() {
+		// if specificTool.use() {}
+		// else {}
+		if tool.use() {}
+		else {}
+		
+	}
+	func done() {
+		// specificTool.putDown()
+		if tool.turnOff() {}
+		else {}
+	}
+}
+```
+
+단순히 새로운 도구를 하나 가져왔을 뿐이지만, `Human` 클래스를 수정해야 했다. 이는 당연한 것으로 보이지만, 이는 분명 `확장` 이 기존 코드의 `수정` 을 불러 일으킨 예이다. 
+
+이를 추상화를 통해 해결해본다. 
+
+![the image for OCP](https://github.com/sangeui/SOLID-Principles/blob/master/Resources/Images/OCP2.png)
+
+```swift
+protocol Tool {
+	func ready()
+	func use()
+	func done()
+}
+
+class Human {
+	var tool: Tool
+}
+```
+
+`Tool` 프로토콜을 하나 만들어 해당 프로토콜을 가지는 클래스가 가져야 할 메소드를 정의했다. 
+
+그리고 `Human` 클래스에는 특정 도구가 아닌, `Tool` 프로토콜을 따르는 객체를 가질 수 있도록 멤버 변수를 만들었다. 
+
+```swift
+class OneTool: Tool {
+	func ready() {
+		print("ready to use OneTool")
+	}
+	func use() {
+		print("using OneTool")
+	}
+	func done() {
+		print("complete using OneTool")
+	}
+	...
+}
+class AnotherTool: Tool {
+	func ready() {
+		print("ready to use AnotherTool")
+	}
+	func use() {
+		print("using AnotherTool")
+	}
+	func done() {
+		print("complete using AnotherTool")
+	}
+}
+
+class Human {
+	var tool: Tool
+	init(tool: Tool) { self.tool = tool }
+	...
+}
+
+Human(tool: OneTool)
+Human(tool: AnotherTool)
+```
+
+
+
 ***
 #### 리스코프 치환 원칙 (LSP)
 ***
