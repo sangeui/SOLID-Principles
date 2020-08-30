@@ -163,8 +163,60 @@ class Human {
 
 이를 추상화를 통해 해결해본다. 
 
+![the image for OCP](https://github.com/sangeui/SOLID-Principles/blob/master/Resources/Images/OCP2.png)
+
+```swift
+protocol Tool {
+	func ready()
+	func use()
+	func done()
+}
+
+class Human {
+	var tool: Tool
+}
 ```
+
+`Tool` 프로토콜을 하나 만들어 해당 프로토콜을 가지는 클래스가 가져야 할 메소드를 정의했다. 
+
+그리고 `Human` 클래스에는 특정 도구가 아닌, `Tool` 프로토콜을 따르는 객체를 가질 수 있도록 멤버 변수를 만들었다. 
+
+```swift
+class OneTool: Tool {
+	func ready() {
+		print("ready to use OneTool")
+	}
+	func use() {
+		print("using OneTool")
+	}
+	func done() {
+		print("complete using OneTool")
+	}
+	...
+}
+class AnotherTool: Tool {
+	func ready() {
+		print("ready to use AnotherTool")
+	}
+	func use() {
+		print("using AnotherTool")
+	}
+	func done() {
+		print("complete using AnotherTool")
+	}
+}
+
+class Human {
+	var tool: Tool
+	init(tool: Tool) { self.tool = tool }
+	...
+}
+
+Human(tool: OneTool)
+Human(tool: AnotherTool)
 ```
+
+
 
 ***
 #### 리스코프 치환 원칙 (LSP)
