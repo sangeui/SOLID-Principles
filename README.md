@@ -117,7 +117,53 @@ class NewTool {}
 새로운 도구를 보니 기쁨을 감추지 못한다. 하지만 이 도구는 최신식이어서, 기존의 도구와는 전혀 다른 인터페이스를 제공한다. 
 
 ```swift
-class 
+class NewTool {
+	battery: Battery
+	init(battery: Battery) {
+		self.battery = battery
+	}
+
+	func turnOn() -> Bool {}
+	func turnOff() -> Bool {}
+	func use() -> Bool {}
+}
+```
+
+어쨌든 새로운 도구를 `Human` 클래스가 사용할 수 있도록 해본다. 
+
+```swift
+class Human {
+	// SpecificTool 은 더 이상 사용하지 않는다.
+	// var specificTool = SpecificTool()
+	var tool = NewTool(battery: Battery())
+	
+	// SpecificTool 인터페이스를 모두 지운다.
+	func ready() {
+		// specificTool.grasp()
+		// specificTool.lift()
+		if tool.turnOn() {}
+		else {}
+	}
+	func start() {
+		// if specificTool.use() {}
+		// else {}
+		if tool.use() {}
+		else {}
+		
+	}
+	func done() {
+		// specificTool.putDown()
+		if tool.turnOff() {}
+		else {}
+	}
+}
+```
+
+단순히 새로운 도구를 하나 가져왔을 뿐이지만, `Human` 클래스를 수정해야 했다. 이는 당연한 것으로 보이지만, 이는 분명 `확장` 이 기존 코드의 `수정` 을 불러 일으킨 예이다. 
+
+이를 추상화를 통해 해결해본다. 
+
+```
 ```
 
 ***
