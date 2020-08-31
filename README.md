@@ -220,6 +220,51 @@ Human(tool: AnotherTool)
 
 ***
 #### 리스코프 치환 원칙 (LSP)
+##### 서브타입은 그것의 기반 타입으로 치환 가능해야 한다. 
+
+```
+타입 S의 각 객체 o_1과 타입 T의 각 객체 o_2가 있을 때, 
+T로 프로그램 P를 정의했음에도 불구하고, o_1이 o_2로 치환될 때
+P의 행위가 변하지 않으면, S는 P의 서브타입이다. 
+
+- 바버라 리스코프(Barbara Liskov)
+```
+
+LSP의 위반은 대개 심각하게 OCP를 위반하는 런타임 타입 정보 (RTTI: Run-Time Type Information) 사용으로 이어진다. 
+
+* ~~위 문장이 의미하는 바는 정확이 무엇이며~~
+* ~~RTTI 는 무엇인가?~~
+
+```swift
+// OCP 위반을 유발하는 LSP 위반
+class Shape {}
+class Square: Shape { func drawSquare() {} }
+class Circle: Shape { func drawCircle() {} }
+
+func drawShape(_ shape: Shape) {
+	if let circle = shape as? Circle {}
+	else if let square = shape as? Square {}
+}
+```
+
+객체를 치환했을 때에 프로그램의 행위가 변한다면 이는 `LSP` 를 위반하는 것이라고 했다.
+
+위의 코드를 살펴보면, `Circle` 또는 `Square` 로 인자를 치환했을 때 그 타입에 맞는 행위를 `if-else if` 를 통해 바꿔주고 있음을 알 수 있다. 
+
+이 말은 곧, 새로운 도형이 추가될 때마다 `if branch` 또한 더해야 함을 추측할 수 있다.  그러므로 `LSP` 를 위반했지만 이는 `OCP` 를 위반하기도 한다. 
+
+```swift
+func drawShape(_ shape: Shape) {
+	if let circle = shape as? Circle {}
+	else if let square = shape as? Square {}
+	// 새로운 도형 추가
+	// OCP 의 위반
+	else if let triangle = shape as? Triangle {}
+}
+```
+
+
+
 ***
 #### 의존 관계 역전 원칙 (DIP)
 ***
