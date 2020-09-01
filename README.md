@@ -321,9 +321,9 @@ func setArea(rectangle: Rectangle) {
 주어진 함수에서 이 작성자는 무엇을 원하고 있을까?
 해당 함수로 `Rectangle` 을 전달했을 때, 이 인자의 `setWidth` 와 `setHeight` 가 각각 넓이와 높이를 설정할 것이라고 작성자는 가정했다. 
 
-따라서 이 함수에 `Square` 객체를 전달하면 실패하게 된다. 
+따라서 이 함수에 `Square` 객체를 전달하면 실패하게 된다. 함수 `setArea` 는 `Square/Rectangle` 계층 구조에 대해 `취약`하다. 
 
-
+`Square` 와 `Rectangle` 이 치환 가능하지 않기 때문에, 이들 사이의 관계는 `LSP` 를 위반한다. 
 
 ***
 #### 의존 관계 역전 원칙 (DIP)
