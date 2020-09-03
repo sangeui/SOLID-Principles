@@ -333,6 +333,31 @@ func setArea(rectangle: Rectangle) {
 1. 상위 수준의 모듈은 하위 수준의 모듈에 의존해서는 안 된다. 둘 모두 추상화에 의존해야 한다. 
 2. 추상화는 구체적인 사항에 의존해서는 안 된다. 구체적인 사항은 추상화에 의존해야 한다.
 
+> 잘 설계된 객체 지향 프로그램의 의존성 구조는 전통적인 절차적 방법에 의해 일반적으로 만들어진 의존성 구조가 `역전`된 것이다.
+
+![the image for DIP](https://github.com/sangeui/SOLID-Principles/blob/master/Resources/Images/DIP1.png)
+ 
+ 위 다이어그램에서 보면 구조가 나름의 규칙에 의해서 잘 나뉜 것처럼 보인다. 
+
+하지만 이것은 각각의 하위 레이어에 의존하게 함으로써, 어떤 상위의 레이어가 그 아래 존재하는 모든 레이어에 민감하도록 만든다는 데에 그 결점이 있다.
+
+`A` 레이어는 `B` 레이어에 의존적인 것과 동시에, `C` 레이어에 의존적이게 된다. 직접 의존하지도 않는데 불구하고 말이다. 
+
+이러한 의존성을 `transitive` 하다고 말한다.
+
+![the image for DIP](https://github.com/sangeui/SOLID-Principles/blob/master/Resources/Images/DIP2.png)
+
+각각의 레이어들은 추상 인터페이스를 만들고, 각 하위 레이어들은 이를 구현한다. 따라서 상위 레이어는 하위 레이어에 의존하지 않으며, 오히려 하위 레이어가 상위 레이어의 인터페이스에 의존한다. 
+
+`역전`은 각 레이어의 의존성의 방향 뿐만 아니라 소유권 또한 바꾸었다. 필요한 서비스에 대한 `인터페이스` 를 `클라이언트` 가 가지고 있다는 것이다. 
+
+> Don't call us, we'll call you.
+
+##### 추상화에 의존해라.
+
+프로그램의 모든 관계는 `Concrete class` 가 아니라 `Abstract class` 또는 `Interface` 를 통해야 한다. 
+
+
 
 ***
 #### 인터페이스 분리 원칙 (ISP)
