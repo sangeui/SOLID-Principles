@@ -357,7 +357,62 @@ func setArea(rectangle: Rectangle) {
 
 프로그램의 모든 관계는 `Concrete class` 가 아니라 `Abstract class` 또는 `Interface` 를 통해야 한다. 
 
+##### Button-Lamp Problem
 
+`Button` 와 `Lamp` 클래스가 각각 있다. 
+
+```swift
+class Button {}
+class Lamp {}
+```
+
+`Button` 은 `on` 과 `off` 상태를 가질 수 있다.
+
+```swift
+class Button {
+	var state: Bool = false // true: on; false: off
+}
+```
+
+`Lamp` 는 이를 켜고 끄는 방법을 가진다.
+
+```swift
+class Lamp {
+	func turnon() {}
+	func turnoff() {}
+}
+```
+
+`Button` 은 상태 (on off) 에 따라 `Lamp` 를 조작하려고 한다. 그래서 `Button` 은 조작하려는 `Lamp` 객체를 하나 가진다.
+
+```swift
+class Button {
+	...
+	var lamp: Lamp
+	init(_ lamp: Lamp) {
+		self.lamp = lamp
+	}
+}
+```
+
+상태를 확인하고 `Lamp` 를 조작하기 위해 `checkAndOrder` 메소드를 가진다. 
+
+```swift
+class Button {
+	...
+	func checkAndOrder() {
+		if somestate { lamp.turnOn() }
+	}
+}
+```
+
+확실히 `Button` 이 `Lamp` 에 의존하고 있음을 알 수 있다. `Button` 이 `Lamp` 를 참조함으로써 사용하고 있고, 이후 `Lamp` 의 변경이 있을 때 `Button` 의 수정 또한 불가피하다. 
+
+![the image for DIP](https://github.com/sangeui/SOLID-Principles/blob/master/Resources/Images/DIP3.png)
+
+위 다이어그램은 위에서 설명했던 구조를 보여주는데, `외부 요인` 에 의해 `Button` 객체가 상태를 변경하면 이는 다시 `Lamp` 객체를 조작하여 그 결과, `외부 환경` 이 변경됨을 묘사하고 있다. 
+
+이 문제는 `상위 수준 정책` 이 `하위 수준 구현` 에서 분리되어 있지 않다고 이야기한다. `추상화` 는 `구체적인 것` 에서 분리되어 있지 않으며 이런 상황에서 상위 수준 정책은 하위 수준 모듈에 의존하게 된다고 한다. 
 
 ***
 #### 인터페이스 분리 원칙 (ISP)
