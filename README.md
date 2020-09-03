@@ -433,6 +433,36 @@ class Button {
 
 `Button` 은 이미 외부 요인에 대해서 통일된 인터페이스를 제공하는 클래스라고 생각해보면, `Lamp` 는 아직 그렇지 않아 보인다. 오히려 이 클래스는 변화가 생기는 외부 환경 중 하나라고 볼 수 있을 것 같다. 
 
+기존의 다이어그램은 아래와 같이 수정할 수 있다. 
+
+![the image for DIP](https://github.com/sangeui/SOLID-Principles/blob/master/Resources/Images/DIP4.png)
+
+위 다이어그램을 보면, `Button` 클래스는 구체적인 외부 환경, `Lamp` 에 의존하고 있음을 알 수 있다. 
+
+바로 이 부분에서, 우리는 추상화를 꺼내어 따로 `Button` 과 `Lamp` 사이에 배치할 수 있다. 
+
+![the image for DIP](https://github.com/sangeui/SOLID-Principles/blob/master/Resources/Images/DIP5.png)
+
+다시 수정된 다이어그램을 보면 위에서 살펴본 바와 같이, 의존성이 `역전`된 것을 확인할 수 있다. `Buton` 클래스는 이제 `ButtonServiceInterface` 를 소유하고 있으며, `Lamp` 는 이 인터페이스를 구체화 한다. 
+
+```swift
+protocol ButtonServiceInterface {...}
+class Button {
+	var btnSvsInterface: ButtonServiceInterface
+	...
+	func checkAndOrder() {
+		if somestate { 
+			btnSvsInterface.turnon()
+		}
+	}
+}
+
+extension Lamp: ButtonServiceInterface {...}
+```
+
+확실히 이제 `Button` 은 영향을 미치고자 하는 타겟이 무엇이든 간에, `ButtonServiceInterface` 타입이라면 다른 코드를 수정하지 않고도 정상적으로 작동할 수 있다. 
+ 
+
 ***
 #### 인터페이스 분리 원칙 (ISP)
 ***
