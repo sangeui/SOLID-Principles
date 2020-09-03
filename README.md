@@ -263,10 +263,77 @@ func drawShape(_ shape: Shape) {
 }
 ```
 
+다음으로 비슷한 예를 살펴본다.
 
+![the image for Rectangle](https://github.com/sangeui/SOLID-Principles/blob/master/Resources/Images/Rectangle.png)
+
+위 다이어그램에서 알 수 있듯이 	`Square` 는 `Rectangle` 을 상속한다. 대략적인 구현은 아래와 같다. 
+
+```swift
+class Rectangle {}
+class Square: Rectangle {}
+```
+
+`Rectangle` 은 자신이 가지는 `height` 와 `width` 을 각각 다루는 인터페이스를 제공한다. 또한 `Square` 도 자신의 특성에 알맞게 이 인터페이스들을 오버라이딩한다. 
+
+```swift
+class Ractangle {
+	func setHeight(_ height: Double) {}
+	func setWidth(_ width: Double) {}
+	func getHeight() -> Double {}
+	func getWidth() -> Double {}
+	...
+}
+class Square: Rectangle {
+	override func setHeight(_ height: Double) {}
+	override func setWidth(_ width: Double) {}
+	override getHeight() -> Double {}
+	override getWidth() -> Double {}
+	...
+}
+```
+여기에서 `Square` 가 인터페이스들을 오버라이딩 해야 했던 이유는 분명하다. `Rectangle` 의 경우 높이와 넓이가 서로 다르기 때문에 각각의 인터페이스를 필요로 하지만 `Square` 의 경우, 넓이와 높이가 같아 인터페이스의 행동을 달리 해줘야 한다. 
+
+결과적으로 다음 함수는 정상적으로 작동할 것이다.
+```swift
+func setArea(rectangle: Rectangle) {
+	rectangle.setWidth(10)
+	rectangle.setHeight(8)
+}
+
+setArea(Square())
+setArea(Rectangle())
+```
+
+`Square` 은 `Rectangle` 을 상속하며, 같은 인터페이스를 가지지만 행동은 달리한다. 따라서 위의 코드는, `Square` 의 경우 사이즈를 두번 설정하기 때문에 어색하지만, 원하는 결과를 얻을 수 있다. 
+
+하지만 다음의 함수를 살펴보자.
+
+```swift
+func setArea(rectangle: Rectangle) {
+	rectangle.setWidth(5)
+	rectangle.setHeight(4)
+
+	assert(rectangle.area() == 20)
+}
+```
+
+주어진 함수에서 이 작성자는 무엇을 원하고 있을까?
+해당 함수로 `Rectangle` 을 전달했을 때, 이 인자의 `setWidth` 와 `setHeight` 가 각각 넓이와 높이를 설정할 것이라고 작성자는 가정했다. 
+
+따라서 이 함수에 `Square` 객체를 전달하면 실패하게 된다. 함수 `setArea` 는 `Square/Rectangle` 계층 구조에 대해 `취약`하다. 
+
+`Square` 와 `Rectangle` 이 치환 가능하지 않기 때문에, 이들 사이의 관계는 `LSP` 를 위반한다. 
+
+> OCP 는 OOD 를 위해 논의된 수많은 의견 중에서도 핵심이다. 이 원칙이 효력을 가질 때, 애플리케이션은 좀 더 유지보수 가능하고, 재사용 가능하고, 견고해진다. LSP 는 OCP 를 가능하게 하는 주요 요인 중 하나다.
 
 ***
 #### 의존 관계 역전 원칙 (DIP)
+
+1. 상위 수준의 모듈은 하위 수준의 모듈에 의존해서는 안 된다. 둘 모두 추상화에 의존해야 한다. 
+2. 추상화는 구체적인 사항에 의존해서는 안 된다. 구체적인 사항은 추상화에 의존해야 한다.
+
+
 ***
 #### 인터페이스 분리 원칙 (ISP)
 ***
