@@ -353,6 +353,10 @@ func setArea(rectangle: Rectangle) {
 
 > Don't call us, we'll call you.
 
+##### 추상화에 의존해라.
+
+프로그램의 모든 관계는 `Concrete class` 가 아니라 `Abstract class` 또는 `Interface` 를 통해야 한다. 
+
 
 
 ***
