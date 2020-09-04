@@ -465,5 +465,97 @@ extension Lamp: ButtonServiceInterface {...}
 
 ***
 #### 인터페이스 분리 원칙 (ISP)
+
+책에 언급된 `ISP` 의 개념이 이해되지 않아서 먼저 예제 코드를 살펴보았다. 
+
+어떤 보안 시스템이 있으며 여기에는 잠기거나 열릴 수 있는 `Door` 객체들이 있다. 또 이 객체들은 그 상태를 알 수 있다. 
+
+```swift
+class Door {
+	func lock() {}
+	func unlock() {}
+	func isDoorOpen() -> Bool {}
+}
+```
+
+이 `Door` 를 상속하는 `TimedDoor` 가 있다. 이 문은 열린 채로 특정 시간이 지나면 알람을 울린다. 마치 냉장고처럼!
+
+그래서 `TimedDoor` 는 시간을 체크하기 위해 `Timer` 라는 별도의 객체와 메시지를 주고 받는다. 
+
+```swift
+class Timer {
+	func register(timeout: Int, client: TimerClient) {}
+}
+protocol TimerClient {
+	func timeout()
+}
+```
+
+타이머를 등록하고자 하는 객체는 `Timer` 의 `register` 를 호출한다. 이 함수는 특정 시간이 지났을 때 `TimerClient` 의 `timeout` 을 호출한다. 
+
+![the image for ISP](https://github.com/sangeui/SOLID-Principles/blob/master/Resources/Images/ISP1.png)
+
+일반적으로는 미숙한 개발자라 할지라도 `Timed Door` 에서 `Timer Client` 인터페이스를 구현하도록 했겠지만 아마 `ISP` 를 설명하기 위해 위 구조를 예시로 가져온 것 같다.
+
+아무튼 위에 보여진 구조대로라면 `Door` 와 `Timed Door` 의 최상위에 `Timer Client` 인터페이스가 존재한다. 즉, `Timed Door` 뿐만 아니라 `Door` 도 해당 인터페이스를 구현하고 있음을 의미한다. 필요하다면 `Timer` 에 `Door` 도 전달할 수 있을 것이다. 하지만 우리는 이미 그 용도로 `Timed Door` 를 가지고 있다!
+
+이러한 구조는 이상해 보이지는 않지만, `Door` 는 이제 이 인터페이스에 의존하게 되었고, 이를 상속하는 모든 클래스가 이 인터페이스를 가지게 된다. 더군다나 하위 클래스가 타이머 기능을 전혀 사용하지 않는다면 `timeout` 메소드의 구현을 퇴화시켜야 한다. 이는 잠재적인 `LSP` 위반이다. 
+
+결과적으로 위 구조는 `불필요한 복잡성`과 `중복성`의 악취를 풍기게 된다.
+
+>**클라이언트의 분리는 인터페이스의 분리를 의미한다.** 
+
+`Door` 는 잠기거나 열릴 수 있고 그 상태를 알고 있는 클래스이며 `Timer` 는 타이머를 제공하는 클래스라고 했다. 
+
+어떤 클라이언트가 이 각각의 클래스를 사용할 수 있을까?
+
+`Door` 를 사용하고자 하는 클라이언트는 이를 통해 문을 조작하고 싶을 것이다. 반면에 `Timer` 를 원하는 클라이언트는 타이머를 사용하고 싶을 것이다. 
+
+이렇게  각 클래스를 원하는 클라이언트가 분리될 수 있다. 그러므로 인터페이스도 분리되어야 한다고 이야기한다. 클라이언트에서 자신이 사용하는 인터페이스에 영향을 끼치기 때문이다. 
+
+**인터페이스 분리 원칙(ISP)**
+
+>클라이언트가 자신이 사용하지 않는 메소드에 의존하도록 강제되어서는 안 된다.
+
+`Door` 가 사용하지 않는 `TimerClient` 를 구현함으로써, 사용하지도 않는 인터페이스 갖게 되는데, 이제부터 `Door` 는 `TimerClient` 의 변경에 영향을 받게 된다. 
+
+이러한 결합을 피하기 위해서는 인터페이스를 분리해야 한다.
+
+- 위임
+- 다중 상속
+
+먼저 위임을 통해서 인터페이스를 분리하는 방법이 있다. 이 방법은 `TimedDoor` 와 `TimerClient` 사이에 어댑터를 하나 두는 것이다. 이때 어댑터는 `TimerClient` 를 구현한다.
+
+```swift
+class DoorTimerAdapter: TimerClient {
+	private var door: TimedDoor
+	init(door: TimedDoor) {
+		self.door = door
+	}
+	
+	func timeout(tiemoutID: Int) {
+		door.doorTimeout(timeoutID)
+	}
+}
+```
+
+기존에는 `Timer` 에 `TimerClient` 를 따르는 `Door` 클래스를 직접 전달했다면, 이번에는 대신 `Adapter` 를 전달한다. 
+
+```swift
+Timer().register(client: Door) // 이전 버전
+Timer().register(client: Adapter) // 새 버전
+```
+
+때문에 타이머를 등록하기 위해서는 매번 새로운 Adapter 를 생성하게 되는데, 이는 아주 작지만 문제가 아예 되지 않는 것은 아니다. 
+
+다음은 다중 상속을 통한 분리인데, 이 방법이 이해가 더 쉬우며 간단해 보인다. 단순히 `TimedDoor` 가 `Door` 와 `TimerClient` 를 상속하도록 한다. 
+
+```swift
+class TimedDoor: Door {}
+extension TimedDoor: TimerClient {}
+```
+
+확실히 단순하고 깔끔해 보인다. 
+
 ***
 
